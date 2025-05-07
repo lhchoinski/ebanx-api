@@ -7,6 +7,6 @@ import lombok.Setter;
 @Setter
 public class Account {
 
-    private int id;
+    private Long id;
     private Double balance;
 }

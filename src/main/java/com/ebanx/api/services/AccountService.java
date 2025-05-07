@@ -1,11 +1,12 @@
 package com.ebanx.api.services;
 
-import com.ebanx.api.dtos.AccountDTO;
-import com.ebanx.api.entities.Account;
+import com.ebanx.api.dtos.RequestDTO;
+import org.apache.coyote.BadRequestException;
 
 public interface AccountService {
 
-    public AccountDTO getAccountBalance(int id);
+    Object event(RequestDTO requestDTO) throws BadRequestException;
 
-    public AccountDTO createAccount(Account account);
+    Double getAccountBalance(Long account_id);
+
 }

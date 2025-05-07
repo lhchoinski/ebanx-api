@@ -1,10 +1,14 @@
 package com.ebanx.api.dtos;
 
 import com.ebanx.api.enums.RequestType;
+import lombok.Getter;
+import lombok.Setter;
 
-public class PayloadDTO {
+@Getter
+@Setter
+public class RequestDTO {
 
     private RequestType type;
-    private String destination;
+    private Long destination;
     private Double amount;
 }
