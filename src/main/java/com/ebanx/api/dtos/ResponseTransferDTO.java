@@ -1,6 +1,6 @@
 package com.ebanx.api.dtos;
 
-public class RequestTransferDTO extends RequestDTO {
+public class ResponseTransferDTO extends RequestDTO {
 
     private String origin;
 }

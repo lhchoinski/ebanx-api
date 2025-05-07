@@ -29,11 +29,12 @@ public class AccountServiceImpl implements AccountService {
             case deposit -> {
                 return deposit(requestDTO);
             }
-            case withdraw -> withdraw(requestDTO);
+            case withdraw -> {
+                return withdraw(requestDTO);
+            }
 
             default -> throw new BadRequestException("Invalid request type");
         }
-        return null;
     }
 
     @Override
@@ -49,7 +50,19 @@ public class AccountServiceImpl implements AccountService {
     }
 
     private WithdrawDTO withdraw(RequestDTO requestDTO) {
-        return null;
+        Account account = getAccount(requestDTO.getOrigin());
+
+        if(account == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        account.setBalance(account.getBalance() - requestDTO.getAmount());
+
+        dbAccount.save(account);
+
+        AccountDTO accountDTO = accountMapper.toDto(account);
+
+        return new WithdrawDTO(accountDTO);
     }
 
     private DepositResponseDTO deposit(RequestDTO requestDTO) {
