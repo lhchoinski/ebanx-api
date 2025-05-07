@@ -1,10 +1,7 @@
 package com.ebanx.api.services.impl;
 
 import com.ebanx.api.db.DbAccount;
-import com.ebanx.api.dtos.AccountDTO;
-import com.ebanx.api.dtos.DepositResponseDTO;
-import com.ebanx.api.dtos.RequestDTO;
-import com.ebanx.api.dtos.WithdrawDTO;
+import com.ebanx.api.dtos.*;
 import com.ebanx.api.entities.Account;
 import com.ebanx.api.mappers.AccountMapper;
 import com.ebanx.api.services.AccountService;
@@ -32,13 +29,16 @@ public class AccountServiceImpl implements AccountService {
             case withdraw -> {
                 return withdraw(requestDTO);
             }
+            case transfer -> {
+                return transfer(requestDTO);
+            }
 
             default -> throw new BadRequestException("Invalid request type");
         }
     }
 
     @Override
-    public Double getAccountBalance(Long account_id) {
+    public Integer getAccountBalance(Long account_id) {
         Account account = getAccount(account_id);
 
         if (account == null) {
@@ -49,10 +49,36 @@ public class AccountServiceImpl implements AccountService {
         return accountDTO.getBalance();
     }
 
+    @Override
+    public void resetDb() {
+        dbAccount.deleteAll();
+    }
+
+    private TransferDTO transfer(RequestDTO requestDTO) {
+        Account originAccount = getAccount(requestDTO.getOrigin());
+        Account destinationAccount = getAccount(requestDTO.getDestination());
+
+        if (originAccount == null || destinationAccount == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        originAccount.setBalance(originAccount.getBalance() - requestDTO.getAmount());
+        destinationAccount.setBalance(destinationAccount.getBalance() + requestDTO.getAmount());
+
+        dbAccount.save(originAccount);
+        dbAccount.save(destinationAccount);
+
+        AccountDTO originAccountDTO = accountMapper.toDto(originAccount);
+        AccountDTO destinationAccountDTO = accountMapper.toDto(destinationAccount);
+
+        return new TransferDTO(originAccountDTO, destinationAccountDTO);
+
+    }
+
     private WithdrawDTO withdraw(RequestDTO requestDTO) {
         Account account = getAccount(requestDTO.getOrigin());
 
-        if(account == null) {
+        if (account == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
 
@@ -65,7 +91,7 @@ public class AccountServiceImpl implements AccountService {
         return new WithdrawDTO(accountDTO);
     }
 
-    private DepositResponseDTO deposit(RequestDTO requestDTO) {
+    private DepositDTO deposit(RequestDTO requestDTO) {
         Account account = getAccount(requestDTO.getDestination());
 
         if (account == null) {
@@ -73,19 +99,18 @@ public class AccountServiceImpl implements AccountService {
             account.setId(requestDTO.getDestination());
             account.setBalance(requestDTO.getAmount());
         } else {
-            double novoSaldo = account.getBalance() + requestDTO.getAmount();
+            Integer novoSaldo = account.getBalance() + requestDTO.getAmount();
             account.setBalance(novoSaldo);
         }
 
         dbAccount.save(account);
 
         AccountDTO accountDTO = accountMapper.toDto(account);
-        return new DepositResponseDTO(accountDTO);
+        return new DepositDTO(accountDTO);
     }
 
     private Account getAccount(Long id) {
         return dbAccount.findById(id).orElse(null);
     }
-
 
 }

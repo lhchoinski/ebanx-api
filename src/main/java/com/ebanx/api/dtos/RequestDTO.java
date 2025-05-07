@@ -11,5 +11,5 @@ public class RequestDTO {
     private RequestType type;
     private Long destination;
     private Long origin;
-    private Double amount;
+    private Integer amount;
 }

@@ -12,16 +12,15 @@ public class DbAccount {
         return Optional.ofNullable(db.get(id));
     }
 
-    public Account save(Account Account) {
+    public void save(Account Account) {
         db.put(Account.getId(), Account);
-        return Account;
     }
 
     public List<Account> findAll() {
         return new ArrayList<>(db.values());
     }
 
-    public void deleteById(Long id) {
-        db.remove(id);
+    public void deleteAll() {
+        db.clear();
     }
 }

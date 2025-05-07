@@ -7,6 +7,8 @@ public interface AccountService {
 
     Object event(RequestDTO requestDTO) throws BadRequestException;
 
-    Double getAccountBalance(Long account_id);
+    Integer getAccountBalance(Long account_id);
+
+    void resetDb();
 
 }

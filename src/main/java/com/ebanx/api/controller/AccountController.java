@@ -23,7 +23,14 @@ public class AccountController {
     }
 
     @GetMapping("/balance")
-    public ResponseEntity<Object> event(@RequestParam Long account_id) {
+    public ResponseEntity<Integer> event(@RequestParam Long account_id) {
         return ResponseEntity.ok(accountService.getAccountBalance(account_id));
     }
+
+    @PostMapping("/reset")
+    public ResponseEntity<Void> event() {
+        accountService.resetDb();
+        return ResponseEntity.ok().build();
+    }
+
 }
