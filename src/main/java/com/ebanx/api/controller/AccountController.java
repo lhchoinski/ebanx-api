@@ -28,9 +28,9 @@ public class AccountController {
     }
 
     @PostMapping("/reset")
-    public ResponseEntity<Void> event() {
+    public ResponseEntity<String> event() {
         accountService.resetDb();
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.OK).body("OK");
     }
 
 }

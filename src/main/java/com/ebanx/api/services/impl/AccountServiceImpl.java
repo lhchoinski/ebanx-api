@@ -3,13 +3,12 @@ package com.ebanx.api.services.impl;
 import com.ebanx.api.db.DbAccount;
 import com.ebanx.api.dtos.*;
 import com.ebanx.api.entities.Account;
+import com.ebanx.api.exceptions.CustomNotFoundException;
 import com.ebanx.api.mappers.AccountMapper;
 import com.ebanx.api.services.AccountService;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +41,7 @@ public class AccountServiceImpl implements AccountService {
         Account account = getAccount(account_id);
 
         if (account == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new CustomNotFoundException();
         }
 
         AccountDTO accountDTO = accountMapper.toDto(account);
@@ -58,8 +57,15 @@ public class AccountServiceImpl implements AccountService {
         Account originAccount = getAccount(requestDTO.getOrigin());
         Account destinationAccount = getAccount(requestDTO.getDestination());
 
-        if (originAccount == null || destinationAccount == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        if (originAccount == null) {
+            throw new CustomNotFoundException();
+        }
+
+        if (destinationAccount == null) {
+            destinationAccount = new Account();
+            destinationAccount.setId(requestDTO.getDestination());
+            destinationAccount.setBalance(0);
+            dbAccount.save(destinationAccount);
         }
 
         originAccount.setBalance(originAccount.getBalance() - requestDTO.getAmount());
@@ -79,7 +85,7 @@ public class AccountServiceImpl implements AccountService {
         Account account = getAccount(requestDTO.getOrigin());
 
         if (account == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+            throw new CustomNotFoundException();
         }
 
         account.setBalance(account.getBalance() - requestDTO.getAmount());

@@ -7,6 +7,6 @@ import lombok.Setter;
 @Setter
 public class AccountDTO {
 
-    private Long id;
+    private String id;
     private Integer balance;
 }
