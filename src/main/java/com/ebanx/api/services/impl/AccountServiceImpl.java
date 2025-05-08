@@ -105,8 +105,8 @@ public class AccountServiceImpl implements AccountService {
             account.setId(requestDTO.getDestination());
             account.setBalance(requestDTO.getAmount());
         } else {
-            Integer novoSaldo = account.getBalance() + requestDTO.getAmount();
-            account.setBalance(novoSaldo);
+            Integer newValue = account.getBalance() + requestDTO.getAmount();
+            account.setBalance(newValue);
         }
 
         dbAccount.save(account);

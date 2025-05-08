@@ -2,6 +2,7 @@ package com.ebanx.api.db;
 
 import com.ebanx.api.entities.Account;
 import org.springframework.stereotype.Repository;
+
 import java.util.*;
 
 @Repository
