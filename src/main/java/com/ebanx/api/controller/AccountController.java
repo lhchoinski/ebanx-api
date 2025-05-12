@@ -2,6 +2,7 @@ package com.ebanx.api.controller;
 
 import com.ebanx.api.dtos.RequestDTO;
 import com.ebanx.api.services.AccountService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping()
 @RequiredArgsConstructor
+@Tag(name = "Account")
 public class AccountController {
 
     private final AccountService accountService;

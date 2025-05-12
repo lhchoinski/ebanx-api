@@ -1,6 +1,6 @@
 package com.ebanx.api.services.impl;
 
-import com.ebanx.api.db.DbAccount;
+import com.ebanx.api.repositories.AccountRepository;
 import com.ebanx.api.dtos.*;
 import com.ebanx.api.entities.Account;
 import com.ebanx.api.exceptions.CustomNotFoundException;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AccountServiceImpl implements AccountService {
 
-    private final DbAccount dbAccount;
+    private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
 
 
@@ -50,7 +50,7 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public void resetDb() {
-        dbAccount.deleteAll();
+        accountRepository.deleteAll();
     }
 
     private TransferDTO transfer(RequestDTO requestDTO) {
@@ -65,14 +65,14 @@ public class AccountServiceImpl implements AccountService {
             destinationAccount = new Account();
             destinationAccount.setId(requestDTO.getDestination());
             destinationAccount.setBalance(0);
-            dbAccount.save(destinationAccount);
+            accountRepository.save(destinationAccount);
         }
 
         originAccount.setBalance(originAccount.getBalance() - requestDTO.getAmount());
         destinationAccount.setBalance(destinationAccount.getBalance() + requestDTO.getAmount());
 
-        dbAccount.save(originAccount);
-        dbAccount.save(destinationAccount);
+        accountRepository.save(originAccount);
+        accountRepository.save(destinationAccount);
 
         AccountDTO originAccountDTO = accountMapper.toDto(originAccount);
         AccountDTO destinationAccountDTO = accountMapper.toDto(destinationAccount);
@@ -90,7 +90,7 @@ public class AccountServiceImpl implements AccountService {
 
         account.setBalance(account.getBalance() - requestDTO.getAmount());
 
-        dbAccount.save(account);
+        accountRepository.save(account);
 
         AccountDTO accountDTO = accountMapper.toDto(account);
 
@@ -109,14 +109,14 @@ public class AccountServiceImpl implements AccountService {
             account.setBalance(newValue);
         }
 
-        dbAccount.save(account);
+        accountRepository.save(account);
 
         AccountDTO accountDTO = accountMapper.toDto(account);
         return new DepositDTO(accountDTO);
     }
 
     private Account getAccount(Long id) {
-        return dbAccount.findById(id).orElse(null);
+        return accountRepository.findById(id).orElse(null);
     }
 
 }
